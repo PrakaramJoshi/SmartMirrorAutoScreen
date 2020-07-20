@@ -1,6 +1,7 @@
 #include "DeviceCameraIn.h"
 #include "modet_settings.h"
 #include "logger.h"
+#include "MotionEvent.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -91,6 +92,9 @@ double DeviceCapture::determine_fps() {
 void DeviceCapture::capture(BlockingQueue<cv::Mat>*_inq, std::atomic<bool> *_keep_alive) {
 	std::size_t max_retry_count = 10;
 	while ((*_keep_alive)) {
+		while(!MotionEvent::is_motion_detection_enabled()){
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+		}
 		cv::Mat *mat = new cv::Mat();
 		if (!m_capture->read(*mat)) {
 			delete mat;

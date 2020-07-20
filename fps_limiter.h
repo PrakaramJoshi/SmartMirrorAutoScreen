@@ -37,6 +37,9 @@ public:
 			auto delay = (1000.0 / m_camera_fps)*delta;
 			using namespace std::chrono_literals;
 			m_delay = std::chrono::milliseconds(static_cast<int>(delay));
+			if(m_delay<std::chrono::milliseconds(1)){
+				m_enable=false;
+			}
 			return m_target_fps;
 		}
 		return m_camera_fps;

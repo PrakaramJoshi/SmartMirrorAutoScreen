@@ -374,7 +374,7 @@ namespace AceLogger
 			if (m_log_closed)
 				return;
 			while (m_logMsgBuffer.size() > 0 || get_pending_logs()>0) {
-				std::this_thread::sleep_for(std::chrono::microseconds(10));
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			}
 			m_log_view->flush();
 		}
