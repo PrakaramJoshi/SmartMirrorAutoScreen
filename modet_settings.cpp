@@ -24,7 +24,7 @@ bool MoDetSettings::__read(const std::string &_path) {
 
 void MoDetSettings::__print()const {
 	std::string str ;
-	str += ("name\t\t\t:\t" + m_name + "\n");
+	str += ("\nname\t\t\t:\t" + m_name + "\n");
 	str += ("min motion seconds\t:\t" + std::to_string(m_min_motion) + "\n");
 	str += ("fps\t\t\t:\t" + std::to_string(m_fps) + "\n");
 	AceLogger::Log(str);

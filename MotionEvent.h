@@ -66,12 +66,12 @@ public:
 	}
 
 	static void turn_on_motion_detection(){
-		AceLogger::Log("Turning motiong detection on");
+		AceLogger::Log("Turning motion detection on");
 		getinstance().set_motion_detection_internal(true);
 	}
 
 	static void turn_off_motion_detection(){
-		AceLogger::Log("Turning motiong detection off");
+		AceLogger::Log("Turning motion detection off");
 		getinstance().set_motion_detection_internal(false);
 	}
 

@@ -1,7 +1,7 @@
 #include "MirrorState.h"
 #include "MotionEvent.h"
 #include "logger.h"
-constexpr static int SHUTOFF_DELAY = 1200;
+constexpr static int SHUTOFF_DELAY = 5*60;
 constexpr static int TURNON_DELAY  = 600;
 constexpr static int MAX_ON_TIME   = 20*60; 
 
