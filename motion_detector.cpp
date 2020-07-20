@@ -1,7 +1,7 @@
 #include "motion_detector.h"
 #include "MotionEvent.h"
 #include "logger.h"
-
+// #define DEBUG_LOGS
 motion_detector::motion_detector(BlockingQueue<cv::Mat> *_inq) {
 	m_inq = _inq;
 }
@@ -17,6 +17,7 @@ void motion_detector::run() {
 	
 	int motion_count = 0;
 	int min_motion = MoDetSettings::get_minimum_motion();
+	int min_motion_percent = MoDetSettings::get_min_motion_percent();
 	while (m_inq->Remove(&mat)) {
 		if (mat) {
 			cv::cvtColor(*mat, gray, cv::COLOR_RGB2GRAY);
@@ -24,14 +25,6 @@ void motion_detector::run() {
 				diffused_frame,
 				cv::Size(5, 5),
 				2.2);
-			if(!MotionEvent::is_motion_detection_enabled()){
-				// if motion detection is disabled,
-				// update the prev frame and continue.
-				diffused_frame.copyTo(prev_frame);
-				delete mat;
-				mat = nullptr;
-				continue;
-			}
 			bool motion = false;
 			if (prev_frame.size().area()!=0) {
 				
@@ -45,13 +38,14 @@ void motion_detector::run() {
 				double motion_percent = non_zero_area*100.0 / area;
 				
 #ifdef DEBUG_LOGS
-				AceLogger::Log("motion : " + std::to_string(motion_percent));
+				if(motion_percent>0.0){
+					AceLogger::Log("motion : " + std::to_string(motion_percent));
+				}
 #endif
-				if (motion_percent> 2.0) {
+				if (motion_percent>min_motion_percent) {
 					motion = true;
 #ifdef DEBUG_LOGS
-					AceLogger::Log(" Has motion   : " + std::string(m_v.has_motion() ? "Yes" : "No"));
-					AceLogger::Log(" Motion count : " + std::to_string(m_v.get_motion_count()));
+					AceLogger::Log(" Has motion ");
 #endif
 				}
 			}
@@ -61,7 +55,7 @@ void motion_detector::run() {
 			else{
 				motion_count = 0;
 			}
-			if(motion>=min_motion){
+			if(motion_count>=min_motion){
 				MotionEvent::set_motion();
 			}
 			

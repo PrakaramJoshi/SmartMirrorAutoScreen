@@ -1,10 +1,7 @@
 #include "MirrorState.h"
 #include "MotionEvent.h"
+#include "modet_settings.h"
 #include "logger.h"
-constexpr static int SHUTOFF_DELAY = 5*60;
-constexpr static int TURNON_DELAY  = 600;
-constexpr static int MAX_ON_TIME   = 20*60; 
-
 using namespace MirrorStateInternal;
 
 bool motion_detected(){
@@ -25,6 +22,8 @@ AceLogger::Log("turning off the mirror display");
 
 MirrorStateOn::MirrorStateOn(){    
     init();
+    m_max_on_time = MoDetSettings::get_max_on_time();
+    m_shut_off_delay = MoDetSettings::get_shut_off_delay();
 }
 
 void MirrorStateOn::init(){
@@ -46,7 +45,7 @@ MirrorState* MirrorStateOn::wait_for_state()const{
 
 bool MirrorStateOn::max_on_time_reached()const{
     auto delta = std::chrono::high_resolution_clock::now()-m_on_time;
-    if(std::chrono::duration_cast<std::chrono::seconds>(delta).count() >MAX_ON_TIME){
+    if(std::chrono::duration_cast<std::chrono::seconds>(delta).count() >m_max_on_time){
         return true;
     }
     return false;
@@ -57,7 +56,7 @@ void MirrorStateOn::wait_for_minimum_shutoff_delay()const{
     //turn of motion detection
     MotionEvent::turn_off_motion_detection();
     // wait for the minimum time the screen should be on before turning off
-    std::this_thread::sleep_for(std::chrono::seconds(SHUTOFF_DELAY));
+    std::this_thread::sleep_for(std::chrono::seconds(m_shut_off_delay));
     // turn the motion detection on
     MotionEvent::turn_on_motion_detection();
     // give the motion detection time to resume and start detecting motion again
@@ -67,6 +66,7 @@ void MirrorStateOn::wait_for_minimum_shutoff_delay()const{
 
 MirrorStateOff::MirrorStateOff(bool _enable_for_minimum_off_delay){
     m_enable_for_minimum_off_delay=_enable_for_minimum_off_delay;
+    m_turn_on_delay = MoDetSettings::get_turn_on_delay();
 }
 
 void MirrorStateOff::init(){
@@ -90,7 +90,7 @@ void MirrorStateOff::wait_for_minimum_offdelay()const{
     //turn of motion detection
     MotionEvent::turn_off_motion_detection();
     // wait for the minimum amount of time screen should be off before turning on
-    std::this_thread::sleep_for(std::chrono::seconds(TURNON_DELAY));
+    std::this_thread::sleep_for(std::chrono::seconds(m_turn_on_delay));
     // turn the motion detection on
     MotionEvent::turn_on_motion_detection();
     // give the motion detection time to resume and start detecting motion again

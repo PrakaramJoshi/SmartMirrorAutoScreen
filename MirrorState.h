@@ -19,6 +19,8 @@ namespace MirrorStateInternal{
 
 	class MirrorStateOn:public MirrorState{
 		std::chrono::system_clock::time_point m_on_time;
+		int m_max_on_time;
+		int m_shut_off_delay;
 
 		bool max_on_time_reached()const;
 		void wait_for_minimum_shutoff_delay()const;
@@ -33,6 +35,7 @@ namespace MirrorStateInternal{
 
 	class MirrorStateOff:public MirrorState{
 		bool m_enable_for_minimum_off_delay;
+		int m_turn_on_delay;
 
 		void wait_for_minimum_offdelay()const;
 	public:

@@ -4,7 +4,11 @@ class MoDetSettings {
 
 	std::string m_name;
 	int m_min_motion;
+	int m_shut_off_delay;
+	int m_turn_on_delay;
+	int m_max_on_time;
 	double m_fps;
+	double m_min_motion_percent;
 
 	MoDetSettings();
 	MoDetSettings(const MoDetSettings&) = delete;
@@ -36,6 +40,21 @@ public:
 
 	static double get_fps() {
 		return instance().m_fps;
+	}
+
+	static int get_shut_off_delay(){
+		return instance().m_shut_off_delay;
+	}
+
+	static int get_turn_on_delay(){
+		return instance().m_turn_on_delay;
+	}
+	
+	static int get_max_on_time(){
+		return instance().m_max_on_time;
+	}
+	static int get_min_motion_percent(){
+		return instance().m_min_motion_percent;
 	}
 
 	static void print() {
